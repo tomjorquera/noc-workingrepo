@@ -7,21 +7,10 @@ function intro(canvasId) {
                 x : canvas.height/2,
                 y : canvas.width/2,
                 step : function() {
-                    var choice = Math.floor(Math.random()*4);
-                    switch(choice) {
-                    case 0:
-                        this.x++;
-                        break;
-                    case 1:
-                        this.x--;
-                        break;
-                    case 2:
-                        this.y++;
-                        break;
-                    case 3:
-                        this.y--;
-                        break;
-                    }
+                    var stepx = Math.random() * 2 -1;
+                    var stepy = Math.random() * 2 -1;
+                    this.x = this.x + stepx;
+                    this.y = this.y + stepy;
                 }
             };
         },
