@@ -10,10 +10,13 @@
          var base = intro('canvas');
          var w = base.walker();
 
-         for (var i = 0; i < 10000; i++) {
-             w.step()
-                 base.display(w);
-         }
+         // infinite draw loop
+         var draw = function() {
+             w.step();
+             base.display(w);
+             window.setTimeout(draw,10);
+         };
+         draw();
         </script>
     </body>
 </html>
