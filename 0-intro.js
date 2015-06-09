@@ -7,8 +7,8 @@ function intro(canvasId) {
                 x : canvas.height/2,
                 y : canvas.width/2,
                 step : function() {
-                    var stepx = Math.random() * 2 -1;
-                    var stepy = Math.random() * 2 -1;
+                    var stepx = Math.random() * 2.5 -1;
+                    var stepy = Math.random() * 2.5 -1;
                     this.x = this.x + stepx;
                     this.y = this.y + stepy;
                 }
