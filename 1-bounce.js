@@ -3,8 +3,8 @@ function bounce(canvasId) {
     var ctx = canvas.getContext('2d');
 
     var res = {
-        x: 100, y: 100,
-        xspeed: 1, yspeed : 3.3
+        xy: vec2.fromValues(100, 100),
+        speed: vec2.fromValues(1, 3.3)
     };
 
     res.setup = function() {
@@ -26,17 +26,16 @@ function bounce(canvasId) {
 
         this.setup();
 
-        this.x = this.x + this.xspeed;
-        this.y = this.y + this.yspeed;
+        vec2.add(this.xy, this.xy, this.speed);
 
-        if ((this.x > canvas.width) || (this.x < 0)) {
-            this.xspeed = this.xspeed * -1;
+        if ((this.xy[0] > canvas.width) || (this.xy[0] < 0)) {
+            this.speed = vec2.fromValues(this.speed[0] * -1, this.speed[1]);
         }
-        if ((this.y > canvas.height) || (this.y < 0)) {
-            this.yspeed = this.yspeed * -1;
+        if ((this.xy[1] > canvas.height) || (this.xy[1] < 0)) {
+            this.speed = vec2.fromValues(this.speed[0], this.speed[1] * -1);
         }
 
-        drawCircle(this.x, this.y);
+        drawCircle(this.xy[0], this.xy[1]);
     };
 
     return res;
