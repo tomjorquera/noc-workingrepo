@@ -13,12 +13,21 @@ function bounce(canvasId) {
     var canvas = document.getElementById(canvasId);
     var ctx = canvas.getContext('2d');
 
+    canvas.onmousemove = function(evt) {
+        var rect = canvas.getBoundingClientRect();
+        res.mousepos = vec2.fromValues(
+            (evt.clientX-rect.left)/(rect.right-rect.left)*canvas.width,
+            (evt.clientY-rect.top)/(rect.bottom-rect.top)*canvas.height);
+    };
+
     var topSpeed = 10;
+    var accFactor = 0.5;
 
     var res = {
         xy: vec2.fromValues(100, 100),
         speed: vec2.fromValues(1, 3.3),
-        acc: vec2.fromValues(-0.001, 0.01)
+        acc: vec2.fromValues(0, 0),
+        mousepos: vec2.fromValues(0, 0)
     };
 
     res.setup = function() {
@@ -27,6 +36,12 @@ function bounce(canvasId) {
     };
 
     res.move = function() {
+
+        var direction = vec2.create();
+        vec2.sub(direction, this.mousepos, this.xy);
+        vec2.normalize(direction, direction);
+        vec2.scale(this.acc, direction, accFactor);
+
         vec2.add(this.speed, this.speed, this.acc);
         vec2.limit(this.speed, this.speed, topSpeed);
         vec2.add(this.xy, this.xy, this.speed);
