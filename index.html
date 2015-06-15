@@ -4,8 +4,20 @@
         <meta charset='utf-8'/>
         <script src='gl-matrix-min.js'></script>
         <script src='noc.js'></script>
+        <script src='2-forces.js'></script>
     </head>
     <body>
         <canvas id='canvas' width='640' height='360'></canvas>
+        <script>
+         var base = forces('canvas');
+
+         // infinite loop
+         var drawingLoop = function() {
+             base.step();
+             window.setTimeout(drawingLoop, 30);
+         };
+         drawingLoop();
+
+        </script>
     </body>
 </html>
