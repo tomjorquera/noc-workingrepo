@@ -5,6 +5,20 @@ noc.forces = {
     // gravity is a directed force depending on a mass and a gravitational constant (default 1)
     gravity: function(m, g = 1) {
         return vec2.fromValues(0, g * m);
+    },
+
+    // friction is a directed force opposite to the velocity,
+    // depending on a normal vector (default (1,1)) and scaled
+    // to a friction coeff (default 1)
+    friction: function(v, f = 1, norm = vec2.fromValues(1,1)) {
+        var frictionMag = vec2.create();
+        vec2.scale(frictionMag, norm, f);
+
+        var res = vec2.create();
+        vec2.normalize(res, v);
+        vec2.scale(res, res, -1);
+        vec2.multiply(res, res, frictionMag);
+        return res;
     }
 };
 
