@@ -19,6 +19,22 @@ noc.forces = {
         vec2.scale(res, res, -1);
         vec2.multiply(res, res, frictionMag);
         return res;
+    },
+
+    // drag is a force opposite to the velocity, depending
+    // on on the env drag coeff, the mover frontal area and
+    // the env density.
+    drag: function(v, dragCoeff, frontalArea = 1,  density = 1) {
+        var res = vec2.create();
+        var scale_factor = -1/2 * dragCoeff * frontalArea * density;
+
+        vec2.normalize(res, v);
+        vec2.multiply(res, res, v);
+        vec2.multiply(res, res, v);
+
+        vec2.scale(res, res, scale_factor);
+
+        return res;
     }
 };
 
