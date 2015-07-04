@@ -12,9 +12,11 @@ function gravity(sim, nbMovers) {
     let res = {};
 
     res._grav = noc.forces.gravity(0.1);
+    res._fric = noc.forces.friction(0.1);
 
     res.step = function(mover){
-        mover.subjectTo(res._grav);
+        mover.subjectTo(res._grav)
+            .subjectTo(res._fric);
     };
 
     return res;
