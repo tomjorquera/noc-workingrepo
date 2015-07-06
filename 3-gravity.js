@@ -13,12 +13,17 @@ function gravity(sim, nbMovers) {
 
     let grav = noc.forces.gravity(0.1);
     let fric = noc.forces.friction(0.1);
-    let drag = noc.forces.drag(0.1);
+    let drag = noc.forces.drag(0.5);
 
     res.step = function(mover){
         mover.subjectTo(grav)
-            .subjectTo(fric)
-            .subjectTo(drag);
+            .subjectTo(fric);
+
+        // add drag when mover is in the lower half
+        // of canvas
+        if(mover.loc[1] > canvas.height/2) {
+            mover.subjectTo(drag);
+        }
     };
 
     return res;
