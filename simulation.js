@@ -1,3 +1,5 @@
+'use strict';
+
 function simulation(canvasId) {
 
     var canvas = document.getElementById(canvasId);
