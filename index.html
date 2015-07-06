@@ -3,19 +3,17 @@
     <head>
         <meta charset='utf-8'/>
         <script src='gl-matrix-min.js'></script>
-        <script src='noc.js'></script>
-        <script src='simulation.js'></script>
+        <script src='noc.js' type="application/javascript;version=1.7"></script>
+        <script src='simulation.js' type="application/javascript;version=1.7"></script>
     </head>
     <body>
         <canvas id='canvas' width='640' height='360'></canvas>
-        <script>
-         var sim = simulation('canvas');
+        <script type='application/javascript;version=1.7'>
+         let sim = simulation('canvas');
 
          // infinite loop
-         var drawingLoop = function() {
-             sim.step(function() {
-                 // do nothing
-             });
+         let drawingLoop = function() {
+             sim.step(() => {}); // do nothing
              window.setTimeout(drawingLoop, 30);
          };
          drawingLoop();
