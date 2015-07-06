@@ -56,10 +56,12 @@ noc.mover = function(options = {}) {
     res.mass = options.mass;
     res.wrapping = options.wrapping;
 
-    res.applyForce = function(force) {
-        vec2.scaleAndAdd(this.acc, this.acc, force, 1/this.mass);
+    // directly apply a force vector to a mover
+    res.applyForce = function(forceVector) {
+        vec2.scaleAndAdd(this.acc, this.acc, forceVector, 1/this.mass);
     };
 
+    // the mover wrap around borders at less than `margin` distance
     res.wrapBounds = function(width, height, margin) {
         if(this.loc[0] > width - margin) {
             this.loc[0] = this.loc[0] - width + margin;
@@ -75,6 +77,7 @@ noc.mover = function(options = {}) {
         }
     };
 
+    // the mover bounce on borders at less than `margin` distance
     res.stayInBounds = function(width, height, margin) {
         if ((this.loc[0] > width - margin) || (this.loc[0] < margin)) {
             this.vel = vec2.fromValues(this.vel[0] * -1, this.vel[1]);
@@ -84,6 +87,8 @@ noc.mover = function(options = {}) {
         }
     };
 
+    // update the mover position in the space according to its
+    // current velocity
     res.update = function(width, height, margin = 0) {
         vec2.add(this.vel, this.vel, this.acc);
         vec2.add(this.loc, this.loc, this.vel);
