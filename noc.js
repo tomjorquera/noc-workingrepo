@@ -32,6 +32,38 @@ noc.forces = {
         );
     },
 
+    // gravitational force is the attraction to another object
+    // with a position and a mass
+    gravitational: function(
+        otherObject,
+        gravityConst = 1,
+        minDist = 1,
+        maxDist = null
+    ) {
+        return noc.forces.custom(
+            "GRAVITATIONAL",
+            (mover => {
+                let dist = vec2.distance(mover.loc, otherObject.loc);
+                if(dist < minDist) {
+                    dist = minDist;
+                }
+                if(maxDist != null && dist > maxDist) {
+                    dist = maxDist;
+                }
+
+                let force = vec2.create();
+                vec2.subtract(force, otherObject.loc, mover.loc);
+                vec2.normalize(force, force);
+
+                let strength = (gravityConst * mover.mass * otherObject.mass)
+                        / (dist * dist);
+                vec2.scale(force, force, strength);
+
+                return force;
+            })
+        );
+    },
+
     // friction is a directed force opposite to the velocity,
     // depending on a normal vector (default (1,1)) and scaled
     // to a friction coeff (default 1)
