@@ -5,15 +5,17 @@
         <script src='gl-matrix-min.js'></script>
         <script src='noc.js' type="application/javascript;version=1.7"></script>
         <script src='simulation.js' type="application/javascript;version=1.7"></script>
+        <script src='4-gravitational.js' type="application/javascript;version=1.7"></script>
     </head>
     <body>
         <canvas id='canvas' width='640' height='360'></canvas>
         <script type='application/javascript;version=1.7'>
          let sim = simulation('canvas');
+         let grav = gravitational(sim, 5);
 
          // infinite loop
          let drawingLoop = function() {
-             sim.step(() => {}); // do nothing
+             sim.step(grav.step); // do nothing
              window.setTimeout(drawingLoop, 30);
          };
          drawingLoop();
