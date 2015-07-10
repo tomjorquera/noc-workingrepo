@@ -113,6 +113,7 @@ noc.mover = function(options = {}) {
     if(options.acc === undefined) options.acc = vec2.fromValues(0,0);
     if(options.mass === undefined) options.mass = 1;
     if(options.wrapping === undefined) options.wrapping = true;
+    if(options.limit === undefined) options.limit = [3,3];
 
     var res = {};
 
@@ -121,6 +122,7 @@ noc.mover = function(options = {}) {
     res.acc = options.acc;
     res.mass = options.mass;
     res.wrapping = options.wrapping;
+    res.limit = options.limit;
 
     // directly apply a force vector to a mover
     // note: in the general case, this function should not be used
@@ -169,7 +171,21 @@ noc.mover = function(options = {}) {
     // update the mover position in the space according to its
     // current velocity
     res.update = function(width, height, margin = 0) {
+
         vec2.add(this.vel, this.vel, this.acc);
+        if(this.vel[0] > this.limit[0]) {
+            this.vel[0] = this.limit[0];
+        }
+        if(this.vel[0] < -1 * this.limit[0]) {
+            this.vel[0] = -1 * this.limit[0];
+        }
+        if(this.vel[1] > this.limit[1]) {
+            this.vel[1] = this.limit[1];
+        }
+        if(this.vel[1] < -1 * this.limit[1]) {
+            this.vel[1] = -1 * this.limit[1];
+        }
+
         vec2.add(this.loc, this.loc, this.vel);
         vec2.set(this.acc, 0, 0);
 
