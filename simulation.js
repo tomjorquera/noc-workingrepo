@@ -7,6 +7,7 @@ function simulation(canvasId) {
 
     var res = {};
 
+    res.canvas = canvas;
     res.height = canvas.height;
     res.width = canvas.width;
 
