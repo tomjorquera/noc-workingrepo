@@ -34,6 +34,16 @@ function render(canvasId, simulation) {
         ctx.fill(path);
     }
 
+    // monitor mouse position
+    let mousePosition = vec2.fromValues(sim.width/2, sim.height/2);
+    canvas.onmousemove = (evt) => {
+        let rect = render.canvas.getBoundingClientRect();
+
+        mousePosition =  vec2.fromValues(
+            (evt.clientX-rect.left)/(rect.right-rect.left)*render.canvas.width,
+            (evt.clientY-rect.top)/(rect.bottom-rect.top)*render.canvas.height);
+    };
+
     return {
         canvas,
         setup: function() {
@@ -51,6 +61,7 @@ function render(canvasId, simulation) {
                            simulation.movers[i].loc[1],
                            simulation.movers[i].mass);
             }
-        }
+        },
+        mousePos: () => mousePosition
     };
 }
