@@ -208,15 +208,15 @@ noc.mover = function(options = {}) {
 
     var res = {};
 
-    res.loc = options.loc;
-    res.vel = options.vel;
-    res.acc = options.acc;
+    res.loc = vec2.clone(options.loc);
+    res.vel = vec2.clone(options.vel);
+    res.acc = vec2.clone(options.acc);
     res.angle = options.angle;
     res.aVel = options.aVel;
     res.aAcc = options.aAcc;
     res.mass = options.mass;
     res.wrapping = options.wrapping;
-    res.limit = options.limit;
+    res.limit = vec2.clone(options.limit);
     res.aLimit = options.aLimit;
 
     // directly apply a force vector to a mover
