@@ -205,6 +205,13 @@ noc.mover = function(options = {}) {
     if(options.wrapping === undefined) options.wrapping = true;
     if(options.limit === undefined) options.limit = [3,3];
     if(options.aLimit === undefined) options.aLimit = 5;
+    if(options.render === undefined) options.render = function(renderer) {
+        renderer.drawCircle(
+            this.loc[0],
+            this.loc[1],
+            this.mass
+        );
+    };
 
     var res = {};
 
@@ -218,6 +225,7 @@ noc.mover = function(options = {}) {
     res.wrapping = options.wrapping;
     res.limit = vec2.clone(options.limit);
     res.aLimit = options.aLimit;
+    res.render = options.render;
 
     // directly apply a force vector to a mover
     // note: in the general case, this function should not be used

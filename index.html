@@ -11,13 +11,11 @@
     <body>
         <canvas id='canvas'></canvas>
         <script type='application/javascript;version=1.7'>
-         let sim = simulation(640, 360);
-         let render = render('canvas', sim);
+         let sim = simulation(render('canvas'), 640, 360);
 
          // infinite loop
          let drawingLoop = function() {
              sim.step(() => {}); // do nothing
-             render.draw();
              window.setTimeout(drawingLoop, 30);
          };
          drawingLoop();

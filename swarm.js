@@ -8,7 +8,24 @@ function swarm(
     nbParticles = 0
 ) {
 
-    let res = noc.mover(params);
+    let res;
+
+    // redefine default drawing function to draw particles
+    if(params.render === undefined) {
+        params.render = function(renderer) {
+            for(let i = 0; i < res.particles.length; i++) {
+                res.particles[i].render(renderer);
+            }
+        };
+
+        res = noc.mover(params);
+
+        // restore default params (in case of reuse)
+        params.render = undefined;
+    } else {
+        res = noc.mover(params);
+    }
+
     res.type = 'swarm';
     res.particles = [];
 

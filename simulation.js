@@ -1,6 +1,6 @@
 'use strict';
 
-function simulation(width, height) {
+function simulation(renderer, width, height) {
 
     var res = {};
 
@@ -15,9 +15,12 @@ function simulation(width, height) {
 
 
     res.step = function(moveFunction){
+        renderer.setup(width, height);
         for (var i = 0; i < this.movers.length; i++) {
-            moveFunction(this.movers[i]);
-            this.movers[i].update(width, height, 20);
+            let m = this.movers[i];
+            moveFunction(m);
+            m.update(width, height, 20);
+            m.render(renderer);
         }
     };
 
