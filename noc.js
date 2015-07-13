@@ -209,7 +209,9 @@ noc.mover = function(options = {}) {
         renderer.drawCircle(
             this.loc[0],
             this.loc[1],
-            this.mass
+            this.mass,
+            'blue',
+            'black'
         );
     };
 

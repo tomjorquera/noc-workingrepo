@@ -15,9 +15,9 @@ function render(canvasId) {
 
     return {
         canvas,
-        drawCircle: function(x, y, radius, alpha = 1) {
-            ctx.fillStyle = 'rgba(0,0,255,' + alpha + ')';
-            ctx.strokeStyle = 'rgba(0,0,0,' + alpha + ')';
+        drawCircle: function(x, y, radius, fillColor, strokeColor) {
+            ctx.fillStyle = fillColor;
+            ctx.strokeStyle = strokeColor;
 
             ctx.beginPath();
             ctx.arc(x,y, radius, 0, 2 * Math.PI, false);
@@ -25,8 +25,16 @@ function render(canvasId) {
             ctx.fill();
             ctx.stroke();
         },
-        drawTriangle: function(x,y,radius,alpha = 1, rotation = 0) {
-            ctx.fillStyle = 'rgba(0,0,255,' + alpha + ')';
+        drawTriangle: function(
+            x,
+            y,
+            radius,
+            fillColor,
+            strokeColor,
+            rotation = 0
+        ) {
+            ctx.fillStyle = fillColor;
+            ctx.strokeStyle = strokeColor;
 
             // draw lines between vertices
             let path = new Path2D();
