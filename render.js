@@ -13,6 +13,27 @@ function render(canvasId, simulation) {
         ctx.stroke();
     }
 
+    function drawTriangle(x,y,radius, rotation = 0) {
+        ctx.fillStyle = 'blue';
+
+        // draw lines between vertices
+        let path = new Path2D();
+
+        let top = [x + radius * Math.cos(rotation),
+                   y + radius * Math.sin(rotation)];
+        path.moveTo(top[0], top[1]);
+
+        path.lineTo(x + radius * Math.cos(Math.PI * 2/3 + rotation),
+                    y + radius * Math.sin(Math.PI * 2/3 + rotation));
+
+        path.lineTo(x + radius * Math.cos(Math.PI * 4/3 + rotation),
+                    y + radius * Math.sin(Math.PI * 4/3 + rotation));
+
+        path.lineTo(top[0], top[1]);
+
+        ctx.fill(path);
+    }
+
     return {
         canvas,
         setup: function() {
