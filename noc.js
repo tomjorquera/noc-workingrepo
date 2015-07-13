@@ -17,8 +17,8 @@ var noc = {};
 noc.forces = {
 
     // a general constructor to build your own forces
-    custom: function(type, f) {
-        return { type, f };
+    custom: function(type, f, angular = false) {
+        return { type, f, angular };
     },
 
     // gravity is a directed force depending on a mass and a
@@ -102,7 +102,24 @@ noc.forces = {
                 return res;
             })
         );
+    },
+
+    // a simple constant angular force
+    rotate: function(angle) {
+        return noc.forces.custom(
+            "ROTATE",
+            (mover => {
+                return angle;
+            }),
+            true
+        );
     }
+};
+
+noc.trigo = {
+    // helper functions to convert from degrees to radians
+    // ex: degrees(180) === Math.PI radians
+    degrees : (d) => d * Math.PI  / 180
 };
 
 noc.mover = function(options = {}) {
@@ -111,18 +128,26 @@ noc.mover = function(options = {}) {
     if(options.loc === undefined) options.loc = vec2.fromValues(0,0);
     if(options.vel === undefined) options.vel = vec2.fromValues(0,0);
     if(options.acc === undefined) options.acc = vec2.fromValues(0,0);
+    if(options.angle === undefined) options.angle = 0;
+    if(options.aVel === undefined) options.aVel = 0;
+    if(options.aAcc === undefined) options.aAcc = 0;
     if(options.mass === undefined) options.mass = 1;
     if(options.wrapping === undefined) options.wrapping = true;
     if(options.limit === undefined) options.limit = [3,3];
+    if(options.aLimit === undefined) options.aLimit = 5;
 
     var res = {};
 
     res.loc = options.loc;
     res.vel = options.vel;
     res.acc = options.acc;
+    res.angle = options.angle;
+    res.aVel = options.aVel;
+    res.aAcc = options.aAcc;
     res.mass = options.mass;
     res.wrapping = options.wrapping;
     res.limit = options.limit;
+    res.aLimit = options.aLimit;
 
     // directly apply a force vector to a mover
     // note: in the general case, this function should not be used
@@ -133,13 +158,25 @@ noc.mover = function(options = {}) {
         return this;
     };
 
+
+    // directly apply an angular force to a mover
+    // note: in the general case, this function should not be used
+    // directly. The `subjectTo` function should be used instead.
+    res.applyAngularForce = function(angularForce) {
+        this.aAcc += angularForce;
+        // allow chaining
+        return this;
+    };
+
     // Take a force and apply it to the mover.
     // note: this function can be overrided to enable special
     // behaviors when applying forces.
     res.subjectTo = function(force) {
-        this.applyForceVec(force.f(this));
-        // allow chaining
-        return this;
+        if(force.angular) {
+            return this.applyAngularForce(force.f(this));
+        } else {
+            return this.applyForceVec(force.f(this));
+        }
     };
 
     // the mover wrap around borders at less than `margin` distance
@@ -188,6 +225,23 @@ noc.mover = function(options = {}) {
 
         vec2.add(this.loc, this.loc, this.vel);
         vec2.set(this.acc, 0, 0);
+
+        // angular acceleration handling
+        this.aVel += this.aAcc;
+
+        if (this.aVel > this.aLimit) {
+            this.aVel = this.aLimit;
+        }
+        if (this.aVel < -1 * this.aLimit) {
+            this.aVel = -1 * this.aLimit;
+        }
+
+        this.angle += this.aVel;
+        this.aAcc = 0;
+
+        if(this.angle >= 2*Math.PI || this.angle <= -2*Math.PI) {
+            this.angle = this.angle % (2*Math.PI);
+        }
 
         if(this.wrapping) {
             this.wrapBounds(width, height, margin);
