@@ -5,15 +5,18 @@
         <script src='gl-matrix-min.js'></script>
         <script src='noc.js' type="application/javascript;version=1.7"></script>
         <script src='simulation.js' type="application/javascript;version=1.7"></script>
+        <script src='render.js' type="application/javascript;version=1.7"></script>
     </head>
     <body>
-        <canvas id='canvas' width='640' height='360'></canvas>
+        <canvas id='canvas'></canvas>
         <script type='application/javascript;version=1.7'>
-         let sim = simulation('canvas');
+         let sim = simulation(640, 360);
+         let render = render('canvas', sim);
 
          // infinite loop
          let drawingLoop = function() {
              sim.step(() => {}); // do nothing
+             render.draw();
              window.setTimeout(drawingLoop, 30);
          };
          drawingLoop();
