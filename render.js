@@ -3,18 +3,19 @@ function render(canvasId, simulation) {
 
     var ctx = canvas.getContext('2d');
 
-    function drawCircle(x, y, radius) {
+    function drawCircle(x, y, radius, alpha = 1) {
+        ctx.fillStyle = 'rgba(0,0,255,' + alpha + ')';
+        ctx.strokeStyle = 'rgba(0,0,0,' + alpha + ')';
+
         ctx.beginPath();
         ctx.arc(x,y, radius, 0, 2 * Math.PI, false);
         ctx.closePath();
-        ctx.fillStyle = 'blue';
         ctx.fill();
-        ctx.strokeStyle = 'black';
         ctx.stroke();
     }
 
-    function drawTriangle(x,y,radius, rotation = 0) {
-        ctx.fillStyle = 'blue';
+    function drawTriangle(x,y,radius,alpha = 1, rotation = 0) {
+        ctx.fillStyle = 'rgba(0,0,255,' + alpha + ')';
 
         // draw lines between vertices
         let path = new Path2D();
