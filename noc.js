@@ -14,11 +14,16 @@ var noc = {};
 // constructor takes some global parameters (e.g. gravitational
 // constant) and returns a force (a force being a function to be
 // passed to the movers).
+//
+// A force can optionally be angular or relative.
+// A relative force depends on the mover angle.
+// E.g. the relative force [1,0] corresponds to "move forward"
+// For angular forces, the relative option has no effect.
 noc.forces = {
 
     // a general constructor to build your own forces
-    custom: function(type, f, angular = false) {
-        return { type, f, angular };
+    custom: function(type, f, angular = false, relative = false) {
+        return { type, f, angular, relative };
     },
 
     // gravity is a directed force depending on a mass and a
@@ -113,6 +118,51 @@ noc.forces = {
             }),
             true
         );
+    },
+
+    // some relative forces
+    forward: function(coeff) {
+        return noc.forces.custom(
+            "FORWARD",
+            (mover => {
+                return vec2.fromValues(coeff, 0);
+            }),
+            false,
+            true
+        );
+    },
+
+    backward: function(coeff) {
+        return noc.forces.custom(
+            "BACKWARD",
+            (mover => {
+                return vec2.fromValues(-1 * coeff, 0);
+            }),
+            false,
+            true
+        );
+    },
+
+    left: function(coeff) {
+        return noc.forces.custom(
+            "LEFT",
+            (mover => {
+                return vec2.fromValues(0, -1 * coeff);
+            }),
+            false,
+            true
+        );
+    },
+
+    right: function(coeff) {
+        return noc.forces.custom(
+            "RIGHT",
+            (mover => {
+                return vec2.fromValues(0, coeff);
+            }),
+            false,
+            true
+        );
     }
 };
 
@@ -152,8 +202,22 @@ noc.mover = function(options = {}) {
     // directly apply a force vector to a mover
     // note: in the general case, this function should not be used
     // directly. The `subjectTo` function should be used instead.
-    res.applyForceVec = function(forceVector) {
-        vec2.scaleAndAdd(this.acc, this.acc, forceVector, 1/this.mass);
+    res.applyForceVec = function(forceVector, relative) {
+        if(relative) {
+            let vectorAngle = Math.atan2(forceVector[1], forceVector[0]);
+
+            let finalAngle = this.angle + vectorAngle;
+            let length = vec2.length(forceVector);
+
+            let rotatedVector = vec2.fromValues(
+                Math.cos(finalAngle),
+                Math.sin(finalAngle)
+            );
+            vec2.scale(rotatedVector, rotatedVector, length);
+            vec2.scaleAndAdd(this.acc, this.acc, rotatedVector, 1/this.mass);
+        } else {
+            vec2.scaleAndAdd(this.acc, this.acc, forceVector, 1/this.mass);
+        }
         // allow chaining
         return this;
     };
@@ -175,7 +239,7 @@ noc.mover = function(options = {}) {
         if(force.angular) {
             return this.applyAngularForce(force.f(this));
         } else {
-            return this.applyForceVec(force.f(this));
+            return this.applyForceVec(force.f(this), force.relative);
         }
     };
 
