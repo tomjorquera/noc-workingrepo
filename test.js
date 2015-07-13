@@ -12,7 +12,7 @@ function test(sim) {
 
     let swm = swarm(
         {
-            mass: 0.01,
+            mass: 5,
             loc: vec2.fromValues(sim.width/2, sim.height/2)
         },
         {
@@ -52,6 +52,13 @@ function test(sim) {
         swm,
         step: (mover) => {
             if(mover.type == 'swarm') {
+
+                mover.
+                    subjectTo(noc.forces.drag(5)).
+                    subjectTo(noc.forces.gravitational({
+                        loc: mouse.pos(), mass:30
+                    }, 1, 5, 5));
+
                 let p = mover.addParticle();
                 p.initalForce = randomThrow(Math.random());
             }
