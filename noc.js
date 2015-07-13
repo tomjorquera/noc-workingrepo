@@ -120,6 +120,26 @@ noc.forces = {
         );
     },
 
+    // track a given position
+    track: function(pos) {
+        return noc.forces.custom(
+            "TRACK",
+            (mover => {
+                let diff = vec2.create();
+                vec2.subtract(diff, pos, mover.loc);
+                let angle = Math.atan2(diff[1], diff[0]) -  mover.angle;
+                if(angle > Math.PI) {
+                    angle -= 2*Math.PI;
+                }
+                if(angle < -1 * Math.PI) {
+                    angle += 2*Math.PI;
+                }
+                return angle;
+            }),
+            true
+        );
+    },
+
     // some relative forces
     forward: function(coeff) {
         return noc.forces.custom(
