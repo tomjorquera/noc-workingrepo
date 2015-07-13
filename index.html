@@ -6,6 +6,7 @@
         <script src='noc.js' type="application/javascript;version=1.7"></script>
         <script src='simulation.js' type="application/javascript;version=1.7"></script>
         <script src='render.js' type="application/javascript;version=1.7"></script>
+        <script src='mousecatcher.js' type="application/javascript;version=1.7"></script>
     </head>
     <body>
         <canvas id='canvas'></canvas>
@@ -13,9 +14,11 @@
          let sim = simulation(640, 360);
          let render = render('canvas', sim);
 
+         let mousecatcher = mousecatcher(sim, render);
+
          // infinite loop
          let drawingLoop = function() {
-             sim.step(() => {}); // do nothing
+             sim.step(mousecatcher.step);
              render.draw();
              window.setTimeout(drawingLoop, 30);
          };

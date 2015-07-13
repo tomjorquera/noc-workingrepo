@@ -47,9 +47,10 @@ function render(canvasId, simulation) {
         draw: function() {
             this.setup();
             for(var i = 0; i < simulation.movers.length; i++) {
-                drawCircle(simulation.movers[i].loc[0],
-                           simulation.movers[i].loc[1],
-                           simulation.movers[i].mass);
+                drawTriangle(simulation.movers[i].loc[0],
+                             simulation.movers[i].loc[1],
+                             simulation.movers[i].mass,
+                             simulation.movers[i].angle);
             }
         }
     };
