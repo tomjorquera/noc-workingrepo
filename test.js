@@ -1,5 +1,20 @@
 function test(sim) {
 
+    let repeller = noc.mover({
+        mass: 30,
+        loc: vec2.fromValues(170, 170)
+    });
+    sim.movers.push(repeller);
+
+    let repulsion = noc.forces.custom(
+        "REPULSION",
+        (m) => vec2.scale(
+            vec2.create(),
+            noc.forces.gravitational(repeller, 4).f(m),
+            -1
+        )
+    );
+
     let randomThrow = (random) => noc.forces.custom(
         "THROW",
         (mover) => {
@@ -42,7 +57,8 @@ function test(sim) {
                         return vec2.fromValues(0,0);
                     }
                 }
-            )
+            ),
+            repulsion
         ]
     );
 
