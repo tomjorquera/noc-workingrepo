@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <script src='libs/p2.js' type="text/javascript"></script>
+    </head>
+    <body>
+        <canvas id='canvas' width='600' height='400'></canvas>
+        <script type='application/javascript;version=1.7'>
+
+         let canvas = document.getElementById('canvas');
+         let ctx = canvas.getContext('2d');
+         ctx.lineWidth = 0.05;
+
+         // create a world with gravity
+         let world = new p2.World({
+             gravity: [0, -9.82]
+         });
+
+         // add a ground
+         let groundBody = new p2.Body({
+             mass: 0 // mass == 0 <=> static body
+         });
+         let groundShape = new p2.Plane();
+         groundBody.addShape(groundShape);
+         world.addBody(groundBody);
+
+         // populate with some bodies
+         let circleBody = new p2.Body({
+             mass: 5,
+             position: [-3,3]
+         });
+         let circleShape = new p2.Circle({
+             radius: 1
+         });
+         circleBody.addShape(circleShape);
+         world.addBody(circleBody);
+
+         let polyBody = new p2.Body({
+             mass: 1,
+             position: [3, 3]
+         });
+         let path = [[-1, 1], [-1, 0], [1, 0], [1, 1], [0.5, 0.5]];
+         polyBody.fromPolygon(path) // add shape
+         world.addBody(polyBody);
+
+         // rendering
+
+         function drawCircle(){
+             ctx.beginPath();
+             var x = circleBody.position[0],
+                 y = circleBody.position[1],
+                 radius = circleShape.radius;
+             ctx.arc(x,y,radius,0,2*Math.PI);
+             ctx.stroke();
+         }
+         function drawPlane(){
+             var y = groundBody.position[1];
+             ctx.moveTo(-canvas.width, y);
+             ctx.lineTo( canvas.width, y);
+             ctx.stroke();
+         }
+         function drawPoly() {
+             ctx.moveTo(polyBody.position[0] + path[0][0],
+                        polyBody.position[1] + path[0][1]);
+
+             for(let i = 1; i < path.length; i++) {
+                 ctx.lineTo(polyBody.position[0] + path[i][0],
+                            polyBody.position[1] + path[i][1]);
+             }
+             ctx.lineTo(polyBody.position[0] + path[0][0],
+                        polyBody.position[1] + path[0][1]);
+             ctx.stroke();
+         }
+
+         function render(){
+             // Clear the canvas
+             ctx.clearRect(0,0,canvas.width,canvas.height);
+
+             // Transform the canvas
+             // Note that we need to flip the y axis since Canvas pixel coordinates
+             // goes from top to bottom, while physics does the opposite.
+             ctx.save();
+             ctx.translate(
+                 canvas.width/2,
+                 canvas.height/2);  // Translate to the center
+             ctx.scale(50, -50);       // Zoom in and flip y axis
+
+             // Draw all bodies
+             drawCircle();
+             drawPlane();
+             drawPoly();
+
+             // Restore transform
+             ctx.restore();
+         }
+
+         // Animation loop
+         function animate(){
+             window.requestAnimationFrame(animate);
+
+             // Move physics bodies forward in time
+             world.step(1/60);
+
+             // Render scene
+             render();
+         }
+
+         animate();
+        </script>
+    </body>
+</html>
