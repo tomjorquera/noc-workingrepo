@@ -32,19 +32,23 @@
                  ctx.strokeStyle = 'black';
 
                  for(s of b.shapes) {
+                     let rotated = p2.vec2.create();
+                     p2.vec2.rotate(rotated, s.vertices[0], b.angle);
                      ctx.moveTo(
-                         b.position[0] + s.vertices[0][0],
-                         b.position[1] + s.vertices[0][1]
+                         b.position[0] + rotated[0],
+                         b.position[1] + rotated[1]
                      );
                      for(let i = 1; i < s.vertices.length; i++) {
+                         let rotated = p2.vec2.create();
+                         p2.vec2.rotate(rotated, s.vertices[i], b.angle);
                          ctx.lineTo(
-                             b.position[0] + s.vertices[i][0],
-                             b.position[1] + s.vertices[i][1]
+                             b.position[0] + rotated[0],
+                             b.position[1] + rotated[1]
                          );
                      }
                      ctx.lineTo(
-                         b.position[0] + s.vertices[0][0],
-                         b.position[1] + s.vertices[0][1]
+                         b.position[0] + rotated[0],
+                         b.position[1] + rotated[1]
                      );
 
                      ctx.stroke();
