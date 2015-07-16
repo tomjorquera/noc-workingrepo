@@ -68,7 +68,12 @@
          function draw() {
              renderer.setup(640, 320);
              for(let b of world.bodies) {
-                 if(typeof b._draw != 'undefined') b._draw(renderer);
+                 if(typeof b._draw != 'undefined')
+                     if(b.position[0] < 0 || b.position[0] > 640 || b.position[1] > 0 || b.position[1] < -320) {
+                         world.removeBody(b);
+                     } else {
+                         b._draw(renderer);
+                     }
              }
          }
 
