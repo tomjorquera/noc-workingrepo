@@ -10,12 +10,79 @@
         <canvas id='canvas'></canvas>
         <script type='application/javascript;version=1.7'>
          let renderer = render('canvas');
+         let mousetracker = mousetrack('canvas');
 
-         let world = new p2.World({});
+         let world = new p2.World({gravity: [0, -9.82]});
+         let ground = new p2.Body({
+             mass: 0,
+             position: [-300,-300]
+         });
+         ground.addShape(new p2.Plane());
+         world.addBody(ground);
+
+         function addRect(body, shape) {
+             let b = new p2.Body(body);
+             b.damping = 0;
+             b.addShape(new p2.Box(shape));
+             world.addBody(b);
+
+             b._draw = (renderer) => {
+                 var ctx = renderer.canvas.getContext('2d');
+                 ctx.fillStyle = 'blue';
+                 ctx.strokeStyle = 'black';
+
+                 for(s of b.shapes) {
+                     ctx.moveTo(
+                         b.position[0] + s.vertices[0][0],
+                         b.position[1] + s.vertices[0][1]
+                     );
+                     for(let i = 1; i < s.vertices.length; i++) {
+                         ctx.lineTo(
+                             b.position[0] + s.vertices[i][0],
+                             b.position[1] + s.vertices[i][1]
+                         );
+                     }
+                     ctx.lineTo(
+                         b.position[0] + s.vertices[0][0],
+                         b.position[1] + s.vertices[0][1]
+                     );
+
+                     ctx.stroke();
+                     ctx.fill();
+
+                 }
+
+             }
+             //renderer.drawBox(
+             //    b.aabb.lowerBound[0], b.aabb.lowerBound[1],
+             //    b.aabb.upperBound[0], b.aabb.upperBound[1],
+             //    'blue',
+             //    'black');
+         //};
+         }
+
+         function draw() {
+             renderer.setup(640, 320);
+             for(let b of world.bodies) {
+                 if(typeof b._draw != 'undefined') b._draw(renderer);
+             }
+         }
+
+         let step = 0;
          function animate(){
              window.requestAnimationFrame(animate);
+
+             if(step % 50 == 0) {
+                 let m = mousetracker.pos();
+                 addRect({mass: 1, position: m}, {width: 15, height: 15});
+             }
+             step++;
+
              world.step(1/60);
+
+             draw();
          }
+         animate();
         </script>
     </body>
 </html>
