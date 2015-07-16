@@ -7,9 +7,10 @@ function mousetrack(canvasId) {
     canvas.onmousemove = (evt) => {
         let rect = canvas.getBoundingClientRect();
 
+        // note: we invert the y-axis to translate between coordinates systems
         mousePosition = [
             (evt.clientX-rect.left)/(rect.right-rect.left)*canvas.width,
-            (evt.clientY-rect.top)/(rect.bottom-rect.top)*canvas.height];
+            (rect.top-evt.clientY)/(rect.bottom-rect.top)*canvas.height];
     };
 
     return {

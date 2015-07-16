@@ -45,11 +45,13 @@ function render(canvasId) {
         },
         setup: function(width, height) {
             // change canvas size according to new dimentions
+            // note: this also clear the canvas
             canvas.width = width;
             canvas.height = height;
-            // clean canvas
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // adjust between coordinate systems
+            ctx.save();
+            ctx.scale(1, -1);       // Zoom in and flip y
         }
     };
 }
