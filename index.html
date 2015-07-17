@@ -15,7 +15,17 @@
              let ground = new p2.Body({
                  position: [-500,0]
              });
-             ground.addShape(new p2.Plane());
+
+             let data = [];
+
+             for(let i=0; i < 200; i++) {
+                 data.push(5* Math.sin(i));
+             }
+             let groundShape = new p2.Heightfield({
+                 heights: data,
+                 elementWidth: 10
+             });
+             ground.addShape(groundShape);
              world.addBody(ground);
 
              function addRect(body, shape) {
