@@ -3,95 +3,46 @@
     <head>
         <meta charset='utf-8'/>
         <script src='libs/p2.js' type="text/javascript"></script>
-        <script src='render.js' type="application/javascript;version=1.7"></script>
-        <script src='mousetrack.js' type="application/javascript;version=1.7"></script>
+        <script src='libs/p2.renderer.js' type="text/javascript"></script>
     </head>
     <body>
-        <canvas id='canvas'></canvas>
         <script type='application/javascript;version=1.7'>
-         let renderer = render('canvas');
-         let mousetracker = mousetrack('canvas');
+         let app = new p2.WebGLRenderer(function() {
 
-         let world = new p2.World({gravity: [0, -9.82]});
-         let ground = new p2.Body({
-             mass: 0,
-             position: [-300,-300]
-         });
-         ground.addShape(new p2.Plane());
-         world.addBody(ground);
+             let world = new p2.World({gravity: [0, -9.82]});
+             this.setWorld(world);
 
-         function addRect(body, shape) {
-             let b = new p2.Body(body);
-             b.damping = 0;
-             b.addShape(new p2.Box(shape));
-             world.addBody(b);
+             let ground = new p2.Body({
+                 position: [-500,0]
+             });
+             ground.addShape(new p2.Plane());
+             world.addBody(ground);
 
-             b._draw = (renderer) => {
-                 var ctx = renderer.canvas.getContext('2d');
-                 ctx.fillStyle = 'blue';
-                 ctx.strokeStyle = 'black';
+             function addRect(body, shape) {
+                 let b = new p2.Body(body);
+                 b.damping = 0;
+                 b.addShape(new p2.Box(shape));
+                 world.addBody(b);
+             }
 
-                 for(s of b.shapes) {
-                     let rotated = p2.vec2.create();
-                     p2.vec2.rotate(rotated, s.vertices[0], b.angle);
-                     ctx.moveTo(
-                         b.position[0] + rotated[0],
-                         b.position[1] + rotated[1]
-                     );
-                     for(let i = 1; i < s.vertices.length; i++) {
-                         let rotated = p2.vec2.create();
-                         p2.vec2.rotate(rotated, s.vertices[i], b.angle);
-                         ctx.lineTo(
-                             b.position[0] + rotated[0],
-                             b.position[1] + rotated[1]
-                         );
+             let step = 0;
+             world.on("postStep",  function(){
+                 if(step % 100 == 0) {
+                     let mPos = app.stage.stage.interactionManager.
+                                    mouse.getLocalPosition(app.stage);
+                     if(typeof mPos == 'undefined') {
+                         mPos = {x:0, y:0};
                      }
-                     ctx.lineTo(
-                         b.position[0] + rotated[0],
-                         b.position[1] + rotated[1]
+                     addRect(
+                         {mass: 1, position: [mPos.x, mPos.y]},
+                         {width: 15, height: 15}
                      );
-
-                     ctx.stroke();
-                     ctx.fill();
-
                  }
+                 step++;
 
-             }
-             //renderer.drawBox(
-             //    b.aabb.lowerBound[0], b.aabb.lowerBound[1],
-             //    b.aabb.upperBound[0], b.aabb.upperBound[1],
-             //    'blue',
-             //    'black');
-         //};
-         }
-
-         function draw() {
-             renderer.setup(640, 320);
-             for(let b of world.bodies) {
-                 if(typeof b._draw != 'undefined')
-                     if(b.position[0] < 0 || b.position[0] > 640 || b.position[1] > 0 || b.position[1] < -320) {
-                         world.removeBody(b);
-                     } else {
-                         b._draw(renderer);
-                     }
-             }
-         }
-
-         let step = 0;
-         function animate(){
-             window.requestAnimationFrame(animate);
-
-             if(step % 50 == 0) {
-                 let m = mousetracker.pos();
-                 addRect({mass: 1, position: m}, {width: 15, height: 15});
-             }
-             step++;
-
-             world.step(1/60);
-
-             draw();
-         }
-         animate();
+             });
+         });
+         app.frame(0,0,640,320);
         </script>
     </body>
 </html>
