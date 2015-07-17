@@ -3,19 +3,8 @@
     <head>
         <meta charset='utf-8'/>
         <script src='libs/p2.js' type="text/javascript"></script>
-        <script src='render.js' type="application/javascript;version=1.7"></script>
-        <script src='mousetrack.js' type="application/javascript;version=1.7"></script>
+        <script src='libs/p2.renderer.js' type="text/javascript"></script>
     </head>
     <body>
-        <canvas id='canvas'></canvas>
-        <script type='application/javascript;version=1.7'>
-         let renderer = render('canvas');
-
-         let world = new p2.World({});
-         function animate(){
-             window.requestAnimationFrame(animate);
-             world.step(1/60);
-         }
-        </script>
     </body>
 </html>
