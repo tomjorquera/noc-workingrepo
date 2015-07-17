@@ -63,4 +63,10 @@ let app = new p2.WebGLRenderer(function() {
         }
         step++;
     });
+
+    world.on('impact', function(evt){
+        if(evt.bodyA === spinner || evt.bodyB === spinner) {
+            console.log('Impact!');
+        }
+    });
 });
