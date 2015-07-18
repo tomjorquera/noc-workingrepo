@@ -1,4 +1,6 @@
-function flowfield(sim, renderer) {
+function flowfield(sim, renderer, perlin) {
+
+    noise.seed(Math.random());
 
     sim.addMover({
         mass:5,
@@ -14,9 +16,10 @@ function flowfield(sim, renderer) {
     // populate field with force vectors
     for(let i = 0; i < cols; i++) {
         field[i] = [];
-       for(let j = 0; j < rows; j++) {
-           field[i][j] = vec2.fromValues(Math.random()*2-1, Math.random()*2-1);
-       }
+        for(let j = 0; j < rows; j++) {
+            let angle = noise.perlin2(i/cols,j/rows)*2*Math.PI;
+            field[i][j] = vec2.fromValues(Math.cos(angle), Math.sin(angle));
+        }
     }
 
     // define field force
