@@ -2,10 +2,16 @@ function flowfield(sim, renderer, perlin) {
 
     noise.seed(Math.random());
 
-    sim.addMover({
-        mass:5,
-        loc:vec2.fromValues(30, 30)
-    });
+    let nbMovers = 400;
+    for(let i = 0; i < nbMovers; i++) {
+        sim.addMover({
+            mass:5,
+            loc:vec2.fromValues(
+                Math.random() * sim.width,
+                Math.random() * sim.height
+            )
+        });
+    }
 
     let fieldResolution = 20,
         cols = sim.width/fieldResolution,
