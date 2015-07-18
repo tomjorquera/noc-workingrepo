@@ -64,7 +64,14 @@ function flowfield(sim, renderer, perlin) {
             let loc = mover.loc;
             let x = Math.floor(loc[0]/fieldResolution);
             let y = Math.floor(loc[1]/fieldResolution);
-            return field[x][y];
+            let steer = vec2.create();
+            vec2.scale(steer, field[x][y], 5);
+            vec2.subtract(steer, steer, mover.vel);
+            if(vec2.length(steer) > 0.5){
+                vec2.normalize(steer, steer);
+                vec2.scale(steer, steer, 0.5);
+            }
+            return steer;
         }
     );
 
