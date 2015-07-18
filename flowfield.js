@@ -1,5 +1,8 @@
 function flowfield(sim, renderer, perlin) {
 
+    let ctx = renderer.canvas.getContext('2d');
+    ctx.strokeStyle = 'lightgrey';
+
     noise.seed(Math.random());
 
     let nbMovers = 400;
@@ -25,6 +28,32 @@ function flowfield(sim, renderer, perlin) {
         for(let j = 0; j < rows; j++) {
             let angle = noise.perlin2(i/cols,j/rows)*2*Math.PI;
             field[i][j] = vec2.fromValues(Math.cos(angle), Math.sin(angle));
+
+            // precalculate some values to speed up rendering
+            let x = i * fieldResolution + fieldResolution/2;
+            let y = j * fieldResolution + fieldResolution/2;
+            let xR = Math.cos(angle)*1/3*fieldResolution;
+            let yR = Math.sin(angle)*1/3*fieldResolution;
+            let xPR = x + xR;
+            let yPR = y + yR;
+            let xNR = x - xR;
+            let yNR = y - yR;
+
+            field[i][j].render = function(renderer) {
+                renderer.drawTriangle(
+                    xPR,
+                    yPR,
+                    fieldResolution/4,
+                    'lightgrey',
+                    'lightgrey',
+                    angle
+                );
+
+                ctx.beginPath();
+                ctx.moveTo(xPR, yPR);
+                ctx.lineTo(xNR, yNR);
+                ctx.stroke();
+            };
         }
     }
 
@@ -40,40 +69,14 @@ function flowfield(sim, renderer, perlin) {
     );
 
     // configure renderer to draw field
-    let ctx = renderer.canvas.getContext('2d');
-    ctx.strokeStyle = 'lightgrey';
     let baseSetup = renderer.setup;
     renderer.setup = function(width, height){
         baseSetup(width, height);
         for(let i = 0; i < cols; i++) {
             for(let j = 0; j < rows; j++) {
-                let vec = field[i][j];
-                let angle = Math.atan2(vec[1], vec[0]);
-
-                let x = i * fieldResolution + fieldResolution/2 ,
-                    y = j * fieldResolution + fieldResolution/2;
-
-                let xR = Math.cos(angle)*1/3*fieldResolution,
-                    yR = Math.sin(angle)*1/3*fieldResolution;
-
-                renderer.drawTriangle(
-                    x + xR,
-                    y + yR,
-                    fieldResolution/4,
-                    'lightgrey',
-                    'lightgrey',
-                    angle
-                );
-
-                ctx.beginPath();
-                ctx.moveTo(x + xR, y + yR);
-                ctx.lineTo(x - xR, y - yR);
-                ctx.stroke();
-
+                field[i][j].render(renderer);
             }
-
         }
-
     };
 
     return {
