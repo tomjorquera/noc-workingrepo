@@ -21,6 +21,9 @@ function steer(sim, mouse, renderer){
         }
     });
 
+    let avoidWall = 10;
+    let avoidSpeed = 20;
+
     let wanderlust = 5;
     let switchBehav = false;
     return {
@@ -46,6 +49,22 @@ function steer(sim, mouse, renderer){
             }
 
             switchBehav = !switchBehav;
+
+            if(mover.loc[0] < avoidWall) {
+
+                mover.subjectTo(noc.forces.custom(
+                    "AVOID_WALL",
+                    (mover) => {
+                        let moveAway = vec2.fromValues(
+                            avoidSpeed,
+                            mover.loc[1]
+                        );
+                        let steer = vec2.create();
+                        vec2.subtract(steer, moveAway, mover.vel);
+                        return noc.forces.steer(steer, 2, avoidWall/3).f(mover);
+                    }
+                ));
+            }
         }
     };
 }
