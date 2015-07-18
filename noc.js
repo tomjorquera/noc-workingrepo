@@ -140,6 +140,25 @@ noc.forces = {
         );
     },
 
+    steer: function(loc, maxSteer) {
+        return noc.forces.custom(
+            "STEER",
+            (mover => {
+                let steer = vec2.create();
+                vec2.subtract(steer, loc, mover.loc);
+                vec2.subtract(steer, steer, mover.vel);
+
+                if(vec2.length(steer) > maxSteer) {
+                    vec2.normalize(steer, steer);
+                    vec2.scale(steer, steer, maxSteer);
+                }
+
+                return steer;
+
+            })
+        );
+    },
+
     // some relative forces
     forward: function(coeff) {
         return noc.forces.custom(
