@@ -13,9 +13,10 @@
     <body>
         <canvas id='canvas'></canvas>
         <script type='application/javascript;version=1.7'>
-         let sim = simulation(render('canvas'), 640, 360);
+         let renderer = render('canvas');
+         let sim = simulation(renderer, 640, 360);
          let mouse = mousetrack('canvas');
-         let steer = steer(sim, mouse);
+         let steer = steer(sim, mouse, renderer);
 
          // infinite loop
          let drawingLoop = function() {
