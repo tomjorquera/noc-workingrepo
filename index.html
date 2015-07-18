@@ -8,15 +8,18 @@
         <script src='render.js' type="application/javascript;version=1.7"></script>
         <script src='swarm.js' type="application/javascript;version=1.7"></script>
         <script src='mousetrack.js' type="application/javascript;version=1.7"></script>
+        <script src='flowfield.js' type="application/javascript;version=1.7"></script>
     </head>
     <body>
         <canvas id='canvas'></canvas>
         <script type='application/javascript;version=1.7'>
-         let sim = simulation(render('canvas'), 640, 360);
+         let renderer = render('canvas');
+         let sim = simulation(renderer, 640, 360);
+         let field = flowfield(sim, renderer);
 
          // infinite loop
          let drawingLoop = function() {
-             sim.step(() => {}); // do nothing
+             sim.step(field.step);
              window.setTimeout(drawingLoop, 30);
          };
          drawingLoop();
