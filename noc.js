@@ -140,21 +140,24 @@ noc.forces = {
         );
     },
 
-    steer: function(loc, maxSteer) {
+    steer: function(loc, maxSteer, slowdownDist = 0) {
         return noc.forces.custom(
             "STEER",
             (mover => {
-                let steer = vec2.create();
-                vec2.subtract(steer, loc, mover.loc);
-                vec2.subtract(steer, steer, mover.vel);
+                let res = vec2.create();
+                vec2.subtract(res, loc, mover.loc);
 
-                if(vec2.length(steer) > maxSteer) {
-                    vec2.normalize(steer, steer);
-                    vec2.scale(steer, steer, maxSteer);
+                let l = vec2.length(res);
+                vec2.normalize(res, res);
+
+                if(l < slowdownDist) {
+                    l = l / slowdownDist * maxSteer;
+                    vec2.scale(res, res, l);
+                } else {
+                    vec2.scale(res, res, maxSteer);
                 }
 
-                return steer;
-
+                return res;
             })
         );
     },
