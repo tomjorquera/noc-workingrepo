@@ -9,19 +9,24 @@
         <script src='swarm.js' type="application/javascript;version=1.7"></script>
         <script src='mousetrack.js' type="application/javascript;version=1.7"></script>
         <script src='app.js' type="application/javascript;version=1.7"></script>
+        <script src='libs/fpsmeter.js' type="application/javascript;version=1.7"></script>
     </head>
     <body>
         <canvas id='canvas'></canvas>
         <script type='application/javascript;version=1.7'>
+         let meter = new FPSMeter();
+
          let renderer = render('canvas');
          let sim = simulation(renderer, 640, 360);
-         let mouse = moustrack('canvas');
+         let mouse = mousetrack('canvas');
 
          let app = application(sim, renderer, mouse);
 
          // infinite loop
          let drawingLoop = function() {
+             meter.tickStart();
              sim.step(app.step);
+             meter.tick();
              window.setTimeout(drawingLoop, 30);
          };
          drawingLoop();
