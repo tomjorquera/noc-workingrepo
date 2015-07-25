@@ -192,16 +192,38 @@ noc.forces = {
                     return normal;
                 };
 
-                // find normal point on path
-                let normal = getNormal(predict, path.begin, path.end);
+                // find the best normal among all path segment
+                let allPoints = [];
+                allPoints.push(path.begin);
+                allPoints = allPoints.concat(path.points);
+                allPoints.push(path.end);
+
+                let normal = null;
+                let distance = Number.POSITIVE_INFINITY;
+                let indice = -1;
+                for (let i = 0; i < allPoints.length - 1; i++) {
+                    let a = allPoints[i];
+                    let b = allPoints[i+1];
+                    let normalCandidate = getNormal(predict, a, b);
+
+                    if(normalCandidate[0] < a[0] || normalCandidate[0] > b[0]) {
+                        normalCandidate = vec2.clone(b);
+                    }
+
+                    let dist = vec2.distance(predict, normalCandidate);
+                    if(dist < distance) {
+                        distance = dist;
+                        normal = normalCandidate;
+                        indice = i;
+                    }
+                }
 
                 // if off the path, seek a target ahead on the path
-                let distance = vec2.distance(normal, predict);
                 if (distance > path.radius) {
 
                     // set target on path
                     let dir = vec2.create();
-                    vec2.subtract(dir, path.end, path.begin);
+                    vec2.subtract(dir, allPoints[indice+1], allPoints[indice]);
                     vec2.normalize(dir, dir);
                     vec2.scale(dir, dir, aimAhead);
 
@@ -427,15 +449,20 @@ noc.mover = function(options = {}) {
     return res;
 };
 
-noc.path = function(begin, end, radius, render) {
+noc.path = function(begin, end, radius, points, render) {
 
     let res = {};
+
+    if(points === undefined) points = [];
 
     if(render === undefined) render = function(renderer) {
         let ctx = renderer.canvas.getContext('2d');
         ctx.strokeStyle = 'LightGrey';
         ctx.beginPath();
         ctx.moveTo(begin[0], begin[1]);
+        for(let i = 0; i < res.points.length; i++) {
+            ctx.lineTo(res.points[i][0], res.points[i][1]);
+        }
         ctx.lineTo(end[0], end[1]);
         ctx.lineWidth = radius * 2;
         ctx.stroke();
@@ -445,6 +472,7 @@ noc.path = function(begin, end, radius, render) {
     res.begin = begin;
     res.end = end;
     res.radius = radius;
+    res.points = points;
     res.render = render;
 
     return res;
