@@ -368,3 +368,26 @@ noc.mover = function(options = {}) {
 
     return res;
 };
+
+noc.path = function(begin, end, radius, render) {
+
+    let res = {};
+
+    if(render === undefined) render = function(renderer) {
+        let ctx = renderer.canvas.getContext('2d');
+        ctx.strokeStyle = 'LightGrey';
+        ctx.beginPath();
+        ctx.moveTo(begin[0], begin[1]);
+        ctx.lineTo(end[0], end[1]);
+        ctx.lineWidth = radius * 2;
+        ctx.stroke();
+        ctx.lineWidth = 1;
+    };
+
+    res.begin = begin;
+    res.end = end;
+    res.radius = radius;
+    res.render = render;
+
+    return res;
+};
