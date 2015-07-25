@@ -162,6 +162,64 @@ noc.forces = {
         );
     },
 
+    followPath: function(
+        path,
+        nbAhead,
+        aimAhead = 10,
+        maxSteer = 0.5,
+        slowdownDist = 0
+    ) {
+        return noc.forces.custom(
+            "FOLLOW",
+            (mover) => {
+                // predict future location
+                let predict = vec2.clone(mover.vel);
+                vec2.normalize(predict, predict);
+                vec2.scale(predict, predict, nbAhead);
+                vec2.add(predict, mover.loc, predict);
+
+                let getNormal = function(predictedLoc, begin, end) {
+                    let ap = vec2.create();
+                    vec2.subtract(ap, predictedLoc, begin);
+                    let ab = vec2.create();
+                    vec2.subtract(ab, end, begin);
+
+                    vec2.normalize(ab, ab);
+                    vec2.scale(ab, ab, vec2.dot(ap, ab));
+
+                    let normal = vec2.create();
+                    vec2.add(normal, begin, ab);
+                    return normal;
+                };
+
+                // find normal point on path
+                let normal = getNormal(predict, path.begin, path.end);
+
+                // if off the path, seek a target ahead on the path
+                let distance = vec2.distance(normal, predict);
+                if (distance > path.radius) {
+
+                    // set target on path
+                    let dir = vec2.create();
+                    vec2.subtract(dir, path.end, path.begin);
+                    vec2.normalize(dir, dir);
+                    vec2.scale(dir, dir, aimAhead);
+
+                    let target = vec2.create();
+                    vec2.add(target, normal, dir);
+
+                    return noc.forces.steer(
+                        target,
+                        maxSteer,
+                        slowdownDist
+                    ).f(mover);
+                } else {
+                    return vec2.fromValues(0,0);
+                }
+            }
+        );
+    },
+
     // some relative forces
     forward: function(coeff) {
         return noc.forces.custom(
