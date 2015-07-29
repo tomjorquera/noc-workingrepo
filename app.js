@@ -8,6 +8,16 @@ function application(sim, renderer, mouse) {
         10
     );
 
+    let nbPoints = 3;
+    for(let i = 0; i < nbPoints; i++) {
+        path.points.push(
+            vec2.fromValues(
+                path.begin[0] +
+                    (i + 1) * (path.end[0] - path.begin[0])/(nbPoints + 1),
+                path.begin[1] + (path.end[1] - path.begin[1])/2 * Math.random())
+        );
+    }
+
     let nbMovers = 5;
     for(let i = 0; i < nbMovers; i++) {
         sim.addMover({
