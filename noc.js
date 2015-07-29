@@ -242,6 +242,60 @@ noc.forces = {
         );
     },
 
+    separate: function(
+        otherObjects,
+        desiredSeparation = 10,
+        moveAwaySpeed = 3,
+        maxSteer = 0.5,
+        slowdownDist = 0
+    ) {
+        return noc.forces.custom(
+            "SEPARATE",
+            (mover => {
+                let totalForce = vec2.fromValues(0,0);
+                let nbOther = 0;
+                for(let other of otherObjects) {
+                    if(other !== mover) {
+                        let d = vec2.distance(mover.loc, other.loc);
+                        if(d < desiredSeparation) {
+                            let diff = vec2.create();
+                            vec2.subtract(diff, mover.loc, other.loc);
+                            vec2.normalize(diff, diff);
+                            vec2.scale(diff, diff, 1/d);
+                            vec2.add(totalForce, totalForce, diff);
+                            nbOther++;
+                        }
+                    }
+                }
+
+                if(nbOther > 0) {
+
+                    vec2.scale(
+                        totalForce,
+                        totalForce,
+                        1/nbOther
+                    );
+
+                    vec2.normalize(totalForce, totalForce);
+
+                    vec2.scale(
+                        totalForce,
+                        totalForce,
+                        moveAwaySpeed
+                    );
+                }
+
+                let target = vec2.create();
+                vec2.add(target, mover.loc, totalForce);
+                return noc.forces.steer(
+                    target,
+                    maxSteer,
+                    slowdownDist
+                ).f(mover);
+            })
+        );
+    },
+
     // some relative forces
     forward: function(coeff) {
         return noc.forces.custom(
