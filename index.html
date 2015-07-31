@@ -2,34 +2,16 @@
 <html>
     <head>
         <meta charset='utf-8'/>
-        <script src='gl-matrix-min.js'></script>
-        <script src='noc.js' type="application/javascript;version=1.7"></script>
-        <script src='simulation.js' type="application/javascript;version=1.7"></script>
+        <script src='gl-matrix-min.js' type="application/javascript;version=1.7"></script>
         <script src='render.js' type="application/javascript;version=1.7"></script>
-        <script src='swarm.js' type="application/javascript;version=1.7"></script>
-        <script src='mousetrack.js' type="application/javascript;version=1.7"></script>
-        <script src='app.js' type="application/javascript;version=1.7"></script>
-        <script src='libs/fpsmeter.js' type="application/javascript;version=1.7"></script>
     </head>
     <body>
         <canvas id='canvas'></canvas>
         <script type='application/javascript;version=1.7'>
-         let meter = new FPSMeter();
-
+         let width = 640;
+         let height = 640;
          let renderer = render('canvas');
-         let sim = simulation(renderer, 640, 360);
-         let mouse = mousetrack('canvas');
-
-         let app = application(sim, renderer, mouse);
-
-         // infinite loop
-         let drawingLoop = function() {
-             meter.tickStart();
-             sim.step(app.step);
-             meter.tick();
-             window.setTimeout(drawingLoop, 30);
-         };
-         drawingLoop();
+         renderer.setup(width, height);
         </script>
     </body>
 </html>
