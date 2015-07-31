@@ -18,7 +18,7 @@ function application(sim, renderer, mouse) {
         );
     }
 
-    let nbMovers = 5;
+    let nbMovers = 30;
     for(let i = 0; i < nbMovers; i++) {
         sim.addMover({
             mass:5,
@@ -34,6 +34,9 @@ function application(sim, renderer, mouse) {
     return {
         step: function(mover) {
             mover.subjectTo(noc.forces.followPath(path, 30, 10, 8, 0));
+            mover.subjectTo(
+                noc.forces.separate(sim.movers, mover.mass * 2.5,20)
+            );
         }
     };
 }
