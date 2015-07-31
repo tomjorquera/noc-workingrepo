@@ -13,6 +13,31 @@
          let height = 640;
          let renderer = render('canvas');
          renderer.setup(width, height);
+
+         function drawFunc(renderer, p) {
+             let ctx = renderer.canvas.getContext('2d');
+             ctx.beginPath();
+             ctx.moveTo(p.x, p.y);
+             ctx.lineTo(p.x + p.length, p.y);
+             ctx.stroke();
+         }
+
+         function paramFunc(p, i) {
+             let x = p.x + p.length * i  * 2 / 3;
+             let y = p.y + 20;
+             let length = p.length / 3;
+
+             return { x, y, length }
+         }
+
+         recurse(
+             renderer,
+             drawFunc,
+             paramFunc,
+             5,
+             2,
+             { x : 20, y: 20, length: width * 4/5 }
+         );
         </script>
     </body>
 </html>
