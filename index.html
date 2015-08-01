@@ -13,6 +13,33 @@
          let height = 640;
          let renderer = render('canvas');
          renderer.setup(width, height);
+
+         let lSys = lSystem(
+             ['F'],
+             (token) => {
+                 switch(token) {
+                     case 'F': return "FF+[+F-F-F]-[-F+F+F]".split("");
+                     default: return token;
+                 }
+             },
+             (token, ctx) => {}
+         );
+
+         let turt  = turtle(
+             vec2.fromValues(width/2, height - 10),
+             height*1/20,
+             Math.PI* -1/2,
+             Math.PI/8
+         );
+
+         turt.render(lSys.state, renderer);
+
+         let nbIter = 4;
+         for(let i = 0; i < nbIter; i++) {
+             turt.speed = turt.speed * 3/5;
+             lSys.iterate();
+             turt.render(lSys.state, renderer);
+         }
         </script>
     </body>
 </html>
