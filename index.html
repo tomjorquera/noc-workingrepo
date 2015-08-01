@@ -13,6 +13,54 @@
          let height = 640;
          let renderer = render('canvas');
          renderer.setup(width, height);
+
+         let iter = 0;
+         let baseLength = 500;
+         let drawPos = [50, 50];
+
+         let lSys = lSystem(
+             [ 'A' ],
+             (token)  => {
+                 switch(token) {
+                     case 'A': return ['A', 'B', 'A'];
+                     case 'B': return ['B', 'B', 'B'];
+                 }
+             },
+             (token, ctx)  => {
+                 ctx.beginPath();
+                 ctx.moveTo(drawPos[0], drawPos[1]);
+                 switch(token) {
+                     case 'A':
+                         ctx.lineTo(
+                             drawPos[0] + baseLength/(Math.pow(3, iter)),
+                             drawPos[1]
+                         );
+                         break;
+                     case 'B':
+                         ctx.moveTo(
+                             drawPos[0] + baseLength/(Math.pow(3, iter)),
+                             drawPos[1]
+                         );
+                         break;
+                 }
+                 ctx.closePath();
+                 ctx.stroke();
+                 drawPos[0] = drawPos[0] + baseLength/(Math.pow(3, iter));
+             }
+         );
+
+         lSys.render(renderer);
+
+         let nbIter = 5;
+
+         for(let i = 0; i < nbIter; i++) {
+             iter++;
+             drawPos[0] = 50;
+             drawPos[1] = drawPos[1] + 25;
+             lSys.iterate();
+             lSys.render(renderer);
+         }
+
         </script>
     </body>
 </html>
