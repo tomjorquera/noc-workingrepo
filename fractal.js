@@ -87,3 +87,19 @@ function kochCurve(start, end) {
         }
     };
 }
+
+function lSystem(axiom, ruleFunction, renderFunction) {
+    return {
+        state: axiom,
+        iterate: function() {
+            this.state = this.state.map(ruleFunction).
+                reduce((a,b) =>  a.concat(b));
+        },
+        render: function(renderer) {
+            let ctx = renderer.canvas.getContext('2d');
+            for(let token of this.state) {
+                renderFunction(token, ctx);
+            }
+        }
+    };
+}
