@@ -13,6 +13,13 @@
          let height = 640;
          let renderer = render('canvas');
          renderer.setup(width, height);
+
+         let k = kochCurve(vec2.fromValues(40, 200), vec2.fromValues(600, 200));
+         let nbGen = 6;
+         for(let i = 0; i < nbGen; i++) {
+             k.gen();
+         }
+         k.render(renderer);
         </script>
     </body>
 </html>
