@@ -103,3 +103,54 @@ function lSystem(axiom, ruleFunction, renderFunction) {
         }
     };
 }
+
+function turtle(startingPos, speed, startingAngle, rotation) {
+    return {
+        speed,
+        rotation,
+        currentPos: startingPos,
+        currentAngle: startingAngle,
+        savedPos: [],
+        savedAngle: [],
+        render: function(sentence, renderer) {
+            let ctx = renderer.canvas.getContext('2d');
+            ctx.beginPath();
+            ctx.moveTo(this.currentPos[0], this.currentPos[1]);
+            for(let token of sentence) {
+                let newPos = [
+                    this.currentPos[0] +
+                        this.speed * Math.cos(this.currentAngle),
+                    this.currentPos[1] +
+                        this.speed * Math.sin(this.currentAngle)
+                ];
+                switch(token) {
+                case 'F':
+                    ctx.lineTo(newPos[0], newPos[1]);
+                    this.currentPos = newPos;
+                    break;
+                case 'G':
+                    ctx.moveTo(newPos[0], newPos[1]);
+                    this.currentPos = newPos;
+                    break;
+                case '+':
+                    this.currentAngle += this.rotation;
+                    break;
+                case '-':
+                    this.currentAngle -= this.rotation;
+                    break;
+                case '[':
+                    this.savedPos.push(this.currentPos);
+                    this.savedAngle.push(this.currentAngle);
+                    break;
+                case ']':
+                    this.currentPos = this.savedPos.pop();
+                    this.currentAngle = this.savedAngle.pop();
+                    ctx.moveTo(this.currentPos[0], this.currentPos[1]);
+                    break;
+                }
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }
+    };
+}
