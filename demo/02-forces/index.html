@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <script src='../../lib-external/fpsmeter.js'></script>
+        <script src='../../lib-external/gl-matrix-min.js'></script>
+        <script src='../../lib/noc.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/simulation.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/render.js' type="application/javascript;version=1.7"></script>
+        <script src='2-forces.js' type="application/javascript;version=1.7"></script>
+    </head>
+    <body>
+        <canvas id='canvas' width='640' height='360'></canvas>
+
+        <script type='application/javascript;version=1.7'>
+         let meter = new FPSMeter();
+
+         let renderer = render('canvas');
+         let sim = simulation(renderer, 640, 360);
+
+         let app = forces(sim);
+
+         // infinite loop
+         let drawingLoop = function() {
+             meter.tickStart();
+             sim.step(app.step);
+             meter.tick();
+             window.setTimeout(drawingLoop, 30);
+         };
+         drawingLoop();
+        </script>
+        <p>In this demo a constant force is applied to a collection of movers of varying mass. Some movers wrap around bounds, and some bounce against them.</p>
+
+    </body>
+</html>

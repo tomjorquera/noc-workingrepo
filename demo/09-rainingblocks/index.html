@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <script src='../../lib-external/p2.js' type="text/javascript"></script>
+        <script src='../../lib-external/p2.renderer.js' type="text/javascript"></script>
+    </head>
+    <body>
+        <script type='application/javascript;version=1.7'>
+         let app = new p2.WebGLRenderer(function() {
+
+             let world = new p2.World({gravity: [0, -9.82]});
+             this.setWorld(world);
+
+             let ground = new p2.Body({
+                 position: [-500,0]
+             });
+
+             let data = [];
+
+             for(let i=0; i < 200; i++) {
+                 data.push(5* Math.sin(i));
+             }
+             let groundShape = new p2.Heightfield({
+                 heights: data,
+                 elementWidth: 10
+             });
+             ground.addShape(groundShape);
+             world.addBody(ground);
+
+             function addRect(body, shape) {
+                 let b = new p2.Body(body);
+                 b.damping = 0;
+                 b.addShape(new p2.Box(shape));
+                 world.addBody(b);
+             }
+
+             let step = 0;
+             world.on("postStep",  function(){
+                 if(step % 100 == 0) {
+                     let mPos = app.stage.stage.interactionManager.
+                                    mouse.getLocalPosition(app.stage);
+                     if(typeof mPos == 'undefined') {
+                         mPos = {x:0, y:0};
+                     }
+                     addRect(
+                         {mass: 1, position: [mPos.x, mPos.y]},
+                         {width: 15, height: 15}
+                     );
+                 }
+                 step++;
+
+             });
+         });
+         app.frame(0,0,640,320);
+        </script>
+        <p>Raining blocks on an uneven ground with p2.</p>
+    </body>
+</html>

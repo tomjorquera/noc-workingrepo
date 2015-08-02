@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <script src='../../lib-external/gl-matrix-min.js'></script>
+        <script src='../../lib/render.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/fractal.js' type="application/javascript;version=1.7"></script>
+    </head>
+    <body>
+        <canvas id='canvas'></canvas>
+        <script type='application/javascript;version=1.7'>
+         let width = 640;
+         let height = 640;
+         let renderer = render('canvas');
+         renderer.setup(width, height);
+
+         let drawFunc = function(r, p) {
+             let ctx = renderer.canvas.getContext('2d');
+             ctx.strokeStyle = 'black';
+             ctx.beginPath();
+             ctx.moveTo(p.start[0], p.start[1]);
+             ctx.lineTo(
+                 p.start[0] + p.length * Math.cos(p.angle),
+                 p.start[1] + p.length * Math.sin(p.angle)
+             );
+             ctx.stroke();
+         };
+
+         let paramFunc = function(p, i) {
+             let start = vec2.fromValues(
+                 p.start[0] + p.length * Math.cos(p.angle),
+                 p.start[1] + p.length * Math.sin(p.angle)
+             );
+             let angle = p.angle + p.rotation - i * 2 * p.rotation ;
+             let length = p.length * 2/3;
+             let rotation = p.rotation;
+             return {
+                 start,
+                 angle,
+                 length,
+                 rotation
+             }
+         };
+
+         recurse(renderer,
+                 drawFunc,
+                 paramFunc,
+                 12,
+                 2,
+                 {
+                     start: vec2.fromValues(width/2, height - 50),
+                     angle: Math.PI * -1/2,
+                     length: 150,
+                     rotation: Math.PI/6
+                 }
+         );
+        </script>
+        <p>A simple symmetrical fractal tree.</p>
+    </body>
+</html>

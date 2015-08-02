@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <script src='../../lib-external/gl-matrix-min.js'></script>
+        <script src='../../lib/render.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/fractal.js' type="application/javascript;version=1.7"></script>
+    </head>
+    <body>
+        <canvas id='canvas'></canvas>
+        <script type='application/javascript;version=1.7'>
+         let width = 640;
+         let height = 640;
+         let renderer = render('canvas');
+         renderer.setup(width, height);
+
+         drawFunc = function(renderer, p){
+             renderer.drawCircle(p.x, p.y, p.r, 'transparent', 'black');
+         };
+
+         paramFunc = function(p, i) {
+             return {
+                 x: p.x + p.r * Math.cos(i * 2 * Math.PI),
+                 y: p.y + p.r * Math.sin(i * 2 * Math.PI),
+                 r: p.r/2
+             };
+         };
+
+         recurse(
+             renderer,
+             drawFunc,
+             paramFunc,
+             6,
+             4,
+             {x:width/2, y:height/2, r:150}
+         );
+        </script>
+        <p>A simple fractal.</p>
+    </body>
+</html>

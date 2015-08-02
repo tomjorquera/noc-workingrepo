@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <script src='gl-matrix-min.js'></script>
+        <script src='noc.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib-external/fpsmeter.js'></script>
+        <script src='../../lib-external/gl-matrix-min.js'></script>
+        <script src='../../lib/noc.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/simulation.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/render.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/mousetrack.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/swarm.js' type="application/javascript;version=1.7"></script>
+        <script src='test.js' type="application/javascript;version=1.7"></script>
+    </head>
+    <body>
+        <canvas id='canvas'></canvas>
+        <script type='application/javascript;version=1.7'>
+         let meter = new FPSMeter();
+
+         let renderer = render('canvas');
+         let sim = simulation(renderer, 640, 360);
+         let mouse = mousetrack('canvas');
+
+
+         let app = fountain(sim);
+
+         // infinite loop
+         let drawingLoop = function() {
+             meter.tickStart();
+             sim.step(app.step);
+             meter.tick();
+             window.setTimeout(drawingLoop, 30);
+         };
+         drawingLoop();
+        </script>
+        <p>A particle fountain. Note: since there is no collision detection, collision with the obstacle is implemented using an inverse gravitational force. This causes a small biais in the particles movement.</p>
+    </body>
+</html>

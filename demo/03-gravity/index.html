@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset='utf-8'/>
+        <script src='../../lib-external/fpsmeter.js'></script>
+        <script src='../../lib-external/gl-matrix-min.js'></script>
+        <script src='../../lib/noc.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/simulation.js' type="application/javascript;version=1.7"></script>
+        <script src='../../lib/render.js' type="application/javascript;version=1.7"></script>
+        <script src='3-gravity.js' type='application/javascript;version=1.7'></script>
+    </head>
+    <body>
+        <canvas id='canvas' width='640' height='360'></canvas>
+        <script type='application/javascript;version=1.7'>
+         let meter = new FPSMeter();
+
+         let renderer = render('canvas');
+         let sim = simulation(renderer, 640, 360);
+
+         let ctx = canvas.getContext('2d');
+         renderer.setup = function(width, height) {
+             canvas.width = width;
+             canvas.height = height;
+
+             ctx.fillStyle = 'white';
+             ctx.fillRect(0, 0, canvas.width, canvas.height/2);
+             ctx.fillStyle = 'lightgrey';
+             ctx.fillRect(0, canvas.height/2, canvas.width, canvas.height);
+         };
+
+         let app = gravity(sim, 15);
+
+         // infinite loop
+         let drawingLoop = function() {
+             meter.tickStart();
+             sim.step(app.step);
+             meter.tick();
+             window.setTimeout(drawingLoop, 30);
+         };
+         drawingLoop();
+        </script>
+        <p>Demo of movers being subjet to gravity and friction. In the grey area the movers are also subject to some drag.</p>
+    </body>
+</html>
